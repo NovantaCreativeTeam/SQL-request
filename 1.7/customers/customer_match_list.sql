@@ -1,11 +1,10 @@
-use borsellini;
-
 /*
  * ==== CUSTOMER MATCH
  * 1. Query to export all customer that have buyed something
  * 2. Query to export all customer that not buy nothing but registerd
  * 3. Query to export all non business customer
- * 2. Query to export all business customer
+ * 4. Query to export all business customer
+ * 5. Query to export all request from mofule GFORMBUILDER
  */
 
 select 
@@ -111,3 +110,19 @@ from ps_customer c
 left outer join ps_address a
 	on c.id_customer = a.id_customer
 where a.id_customer is null;
+
+
+select 
+	SUBSTRING_INDEX(name, ' ', 1) as `First Name`,
+    substring(name from instr(name, ' ') + 1) as `Last Name`,
+    '' as `Country`,
+    '' as `Zip`,
+    email as `Email`,
+    IFNULL(IF(phone like '0039%' or phone like '_0039%' or phone like '+39%', REPLACE(' ', '', REPLACE(phone, '0039', '+39')), CONCAT('+39', phone)), '') as `Phone`
+from (
+	select 
+		REPLACE(json_extract(jsonrequest, '$.{name}'), '"', '') AS name,
+		REPLACE(json_extract(jsonrequest, '$.{email}'), '"', '') AS email,
+		REPLACE(REPLACE(json_extract(jsonrequest, '$.{phone}'), '"', ''), ' ', '') AS phone
+	from ps_gformrequest
+) form_request;
