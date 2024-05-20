@@ -64,8 +64,10 @@ left outer join ps_country co
 	on a.id_country = co.id_country
 left outer join ps_customer c
 	on c.id_customer = a.id_customer
-where a.company is not null and a.company <> ''
-group by c.id_customer;
+left outer join ps_orders o
+	on o.id_customer = c.id_customer
+where o.id_order is not null and a.company is not null and a.company <> ''
+group by c.email;
 
 
 select 
@@ -84,6 +86,8 @@ left outer join ps_country co
 	on a.id_country = co.id_country
 left outer join ps_customer c
 	on c.id_customer = a.id_customer
+left outer join ps_orders o
+	on o.id_customer = c.id_customer
 where 
 	(a.company = '' or a.company is null) and 
     a.`id_customer` not in (
@@ -94,22 +98,9 @@ where
 			on c_in.id_customer = a_in.id_customer
 		where a_in.company is not null and a_in.company <> '' and c_in.id_customer is not null
 		group by c_in.id_customer
-	)
-group by c.id_customer
-
-union all
-
-select 
-	c.firstname as `First Name`,
-    c.lastname as `Last Name`,
-    '' as `Country`,
-    '' as `Zip`,
-    c.email as `Email`,  
-    '' as `Phone`
-from ps_customer c
-left outer join ps_address a
-	on c.id_customer = a.id_customer
-where a.id_customer is null;
+	) and
+    o.id_order is not null
+group by c.email;
 
 
 select 
