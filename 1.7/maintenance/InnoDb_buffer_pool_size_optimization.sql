@@ -1,7 +1,7 @@
 /**
  * Recommended InnoDB Buffer Pool Size =======
  * This query calculate the recommended size for InnoDB Buffer Pool Size
- * 
+ * see also: https://dba.stackexchange.com/questions/27328/how-large-should-be-mysql-innodb-buffer-pool-size
  */
  
 SET @ribps := 1; 
